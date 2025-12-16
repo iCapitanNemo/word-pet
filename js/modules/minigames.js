@@ -8,6 +8,7 @@ import { startFishing } from './fishing.js';
 
 export let gameMode = null;
 export let gameData = {};
+let runnerLoop = null;
 
 export function startGame(type) {
     if(gameMode) {
@@ -26,10 +27,17 @@ export function startGame(type) {
     if(type === 'dog') { 
         gameData = { dogPos: 0, catPos: 40 }; 
         updateDogScene(); 
-        setTab('quiz'); // Dog game still uses quiz? "Runner with questions"
-        // Check Roadmap: "Runner: Текущая реализация. Бег с препятствиями (вопросы)."
-        // So Dog game NEEDS quiz tab.
+        setTab('quiz'); 
         document.getElementById('tab-quiz').style.display = 'flex';
+        
+        // Start Runner Loop
+        runnerLoop = setInterval(() => {
+            if(gameMode !== 'dog') return clearInterval(runnerLoop);
+            // Dog chases cat slowly
+            gameData.dogPos += 0.5; // Pressure
+            updateDogScene();
+        }, 1000);
+        
     } else if (type === 'fish') { 
         startFishing();
     } else if (type === 'tetris') {
@@ -45,16 +53,24 @@ export function stopGame() {
     gameMode = null;
     document.getElementById('main-scene').classList.remove('game-active');
     
+    // Reset loops
+    if(runnerLoop) clearInterval(runnerLoop);
+    
     // Reset tabs
     document.getElementById('tab-quiz').style.display = 'none';
-    // If we were in adventure tab, show it again, or just show quiz tab as default state?
-    // Let's go back to Adventure Menu
     setTab('adv');
 }
 
 export function updateDogScene() {
-    document.getElementById('dog-el').style.left = gameData.dogPos + '%';
-    document.getElementById('cat-run-el').style.left = gameData.catPos + '%';
+    let dogEl = document.getElementById('dog-el');
+    let catEl = document.getElementById('cat-run-el');
+    
+    dogEl.style.left = gameData.dogPos + '%';
+    catEl.style.left = gameData.catPos + '%';
+    
+    // CSS Running animation
+    dogEl.classList.add('running');
+    catEl.classList.add('running');
     
     if(gameData.dogPos >= gameData.catPos - 5) { 
         alert("Ой! Собака догнала! 🐕"); 
@@ -76,4 +92,3 @@ export function catchFishAnim() {
     setTimeout(() => f.style.top = '50px', 300); 
     setTimeout(() => f.style.opacity = 0, 1000);
 }
-

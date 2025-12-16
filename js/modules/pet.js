@@ -63,8 +63,22 @@ export function eat() {
     }, 2000);
 }
 
+import { playAudio } from '../core/audio.js';
+
 export function pokeCat() {
-    say("Purr... ❤️");
+    const sounds = ["Meow!", "Purr...", "Mew!", "Mrrr!"];
+    const sound = sounds[Math.floor(Math.random() * sounds.length)];
+    say(sound + " ❤️");
+    
+    // Play sound with pitch variation
+    if ('speechSynthesis' in window) {
+        let u = new SpeechSynthesisUtterance(sound);
+        u.lang = 'en-US';
+        u.pitch = 1.2 + Math.random() * 0.5; // High pitch for cat
+        u.rate = 1.2;
+        speechSynthesis.speak(u);
+    }
+
     let w = document.querySelector('.cat-wrapper');
     w.style.transform = `scale(1.2) scaleX(${cat.dir})`;
     setTimeout(() => w.style.transform = `scale(1) scaleX(${cat.dir})`, 200);

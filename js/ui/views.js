@@ -3,8 +3,16 @@ import { renderShop, renderFridge, updateUI } from './render.js';
 import { state, saveState } from '../core/state.js';
 
 export function setTab(id) {
-    // If leaving adv tab during game - stop game
-    if(gameMode && id !== 'adv') stopGame();
+    // Auto-stop game if switching away from game-related tabs
+    if(gameMode && id !== 'quiz' && id !== 'adv') {
+        stopGame();
+    }
+    // Specific check for Adventure tab: if we click "Lessons" while in game, we might want to stop?
+    // User requested: "Как только нажимаем на Уроки - завершаем игру из похода."
+    if(gameMode && id === 'quiz' && gameMode !== 'dog') {
+        // Dog game USES quiz tab, so don't stop. Others do stop.
+        stopGame();
+    }
 
     ['quiz','shop','adv'].forEach(t => {
         const el = document.getElementById('tab-'+t);
