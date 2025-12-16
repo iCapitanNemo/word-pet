@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <script>
+        window.onerror = function (msg, url, line, col, error) {
+            alert("Error: " + msg + "\nIn: " + url + ":" + line);
+            return false;
+        };
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Word Pet 10.0: Modular</title>
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+
+<body>
+
+    <div id="onboarding" style="display:none">
+        <div class="onboarding-inner">
+            <h1>Welcome to Word Pet!</h1>
+            <div style="font-size:60px; margin:20px">🐱</div>
+            <h3>What is your name?</h3>
+            <input type="text" id="name-input" class="p-input" style="text-align:center" placeholder="Your Name">
+            <button class="p-btn" onclick="saveName()">Start Playing</button>
+        </div>
+    </div>
+
+    <div id="app-frame">
+        <div class="header">
+            <div class="stat-box">
+                <span class="lvl-text" id="lvl-name">Новичок</span>
+                <div class="stat-val">⭐ <span id="lvl">1</span></div>
+                <div class="bar-cont" style="background:#E3F2FD">
+                    <div class="bar-fill" id="xp-bar" style="width:0%"></div>
+                </div>
+            </div>
+            <div class="stat-box" style="width: 80px;">
+                <div style="font-size:10px; color:#999">Сытость</div>
+                <div class="bar-cont">
+                    <div class="bar-fill" id="hunger-bar"></div>
+                </div>
+            </div>
+            <div class="stat-val" style="color:#FBC02D">💰 <span id="coins">0</span></div>
+        </div>
+
+        <div class="scene-container" id="main-scene">
+
+            <div class="room-layer">
+                <div class="wall" id="wall-bg"></div>
+                <div class="floor" id="floor-bg">
+                    <div id="bowl">🥣<div id="bowl-food">🍎</div>
+                    </div>
+                    <div id="toys-layer"></div>
+
+                    <div id="bed" class="furniture" onclick="interact('bed')">🛏️</div>
+                    <div id="table" class="furniture" onclick="interact('table')">🪑</div>
+
+                    <div id="cat-container" class="idle" onclick="pokeCat()">
+                        <div class="cat-wrapper">
+                            <div class="cat-head">🐱</div>
+                            <div class="cat-torso"></div>
+                            <div class="cat-tail"></div>
+                            <div class="cat-paw p-left"></div>
+                            <div class="cat-paw p-right"></div>
+                        </div>
+                        <div class="bubble" id="bubble">...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-layer">
+                <div id="game-dog" class="adv-scene">
+                    <h3 style="color:white; margin-top:20px">Run Home!</h3>
+                    <div id="dog-track">
+                        <div id="dog-el">🐕</div>
+                        <div id="cat-run-el">🐈</div>
+                        <div id="house-safe">🏠</div>
+                    </div>
+                    <div style="color:white; font-size:12px">Отвечай правильно, чтобы убежать!</div>
+                </div>
+
+                <div id="game-fish" class="adv-scene">
+                    <h3 style="color:white; margin-top:20px">Gone Fishing!</h3>
+                    <div id="fisher-cat">🐱🎣</div>
+                    <div id="water-area">
+                        <div class="fish-target" id="fish-target">🐟</div>
+                    </div>
+                </div>
+
+                <div id="game-tetris" class="adv-scene">
+                    <!-- Tetris injected by JS -->
+                </div>
+
+                <div id="game-kolobok" class="adv-scene" style="background:#5D4037">
+                    <!-- Kolobok injected by JS -->
+                </div>
+
+                <div id="game-chess" class="adv-scene" style="background:#37474F">
+                    <!-- Chess injected by JS -->
+                </div>
+            </div>
+        </div>
+
+        <div class="control-panel">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="setTab('quiz')">🎓 Уроки</button>
+                <button class="tab-btn" onclick="setTab('shop')">🛒 Магазин</button>
+                <button class="tab-btn" onclick="setTab('adv')" style="color:#4CAF50">🚀 В поход</button>
+                <button class="tab-btn" onclick="toggleFridge()" style="color:#2979FF">❄️ Еда</button>
+            </div>
+
+            <div class="panel-content">
+                <div id="tab-quiz" class="quiz-box">
+                    <div class="q-ctx" id="q-ctx"></div>
+                    <div class="q-emoji" id="q-emoji"></div>
+                    <div class="q-main" id="q-text"></div>
+                    <button id="audio-btn"
+                        style="display:none; margin:0 auto; background:#E1F5FE; border:none; padding:5px 15px; border-radius:10px; cursor:pointer"
+                        onclick="playAudio()">🔊 Listen</button>
+                    <div class="q-opts" id="q-opts"></div>
+                </div>
+
+                <div id="tab-shop" class="grid" style="display:none"></div>
+
+                <div id="tab-adv" style="display:none; padding-top:20px;">
+                    <button class="opt-btn" onclick="startGame('dog')"
+                        style="background:#FFAB91; width:100%; margin-bottom:10px; font-size:18px">🐕 Run Home</button>
+                    <button class="opt-btn" onclick="startGame('fish')"
+                        style="background:#81D4FA; width:100%; margin-bottom:10px; font-size:18px">🎣 Go
+                        Fishing</button>
+                    <button class="opt-btn" onclick="startGame('tetris')"
+                        style="background:#CE93D8; width:100%; margin-bottom:10px; font-size:18px">🧱 Word
+                        Tetris</button>
+                    <button class="opt-btn" onclick="startGame('kolobok')"
+                        style="background:#FFCC80; width:100%; margin-bottom:10px; font-size:18px">🍪 Kolobok</button>
+                    <button class="opt-btn" onclick="startGame('chess')"
+                        style="background:#9FA8DA; width:100%; font-size:18px">♞ Knight Quest</button>
+                    <button class="opt-btn" onclick="stopGame()" style="background:#eee; margin-top:10px">🏠
+                        Домой</button>
+                </div>
+            </div>
+            <div id="fridge-panel">
+                <div style="padding:10px; background:#E3F2FD; display:flex; justify-content:space-between">
+                    <b>❄️ Продукты</b> <span onclick="toggleFridge()" style="color:red; cursor:pointer">✕</span>
+                </div>
+                <div id="fridge-content" class="grid" style="padding:10px"></div>
+            </div>
+        </div>
+
+        <!-- Parental Panel -->
+        <div id="parental-panel">
+            <div class="p-close" onclick="closeParental()">✕</div>
+            <h2>👩‍🏫 Родительский режим</h2>
+
+            <div style="width:90%; margin-bottom:10px; border-bottom:1px solid #ddd; padding-bottom:10px;">
+                <h4>🎯 Дневная цель (XP)</h4>
+                <input type="number" id="p-goal" class="p-input" style="width:60px" value="50"
+                    onchange="updateDailyGoal(this.value)">
+                <span>Current: <span id="p-daily-curr">0</span> XP</span>
+            </div>
+
+            <div style="width:90%; margin-bottom:10px; border-bottom:1px solid #ddd; padding-bottom:10px;">
+                <h4>📊 Статистика ошибок</h4>
+                <div id="p-stats" style="font-size:12px; color:#555; max-height:100px; overflow-y:auto">
+                    Нет данных
+                </div>
+            </div>
+
+            <div style="width:90%">
+                <h4>➕ Добавить слово</h4>
+                <input type="text" id="p-en" class="p-input" placeholder="English Word">
+                <input type="text" id="p-ru" class="p-input" placeholder="Russian Word">
+                <input type="text" id="p-em" class="p-input" placeholder="Emoji">
+                <button class="p-btn" onclick="addCustomWord()">Добавить</button>
+                <div id="p-msg" style="color:green; margin-top:10px; height:20px"></div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/app.js"></script>
+</body>
+
+</html>

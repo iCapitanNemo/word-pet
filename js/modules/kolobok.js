@@ -1,0 +1,111 @@
+import { state, saveState } from '../core/state.js';
+import { updateUI } from '../ui/render.js';
+import { stopGame } from './minigames.js';
+
+let storyStep = 0;
+
+// Story data with English learning tasks
+const STORY = [
+    {
+        text: "Колобок гуляет по лесу. Навстречу Зайка! 🐰\nЗайка спрашивает по-английски: 'Hello! How are you?'",
+        icon: "🐰",
+        opts: [
+            { txt: "I am fine!", next: 1, correct: true },
+            { txt: "I am a fox.", next: -1, correct: false }
+        ]
+    },
+    {
+        text: "Идет Колобок дальше. Видит Волка. 🐺\nВолк говорит: 'I am hungry! Give me an APPLE!'",
+        icon: "🐺",
+        opts: [
+            { txt: "Вот яблоко 🍎", next: 2, correct: true }, // Logic assumes user knows translation
+            { txt: "Вот мяч ⚽", next: -1, correct: false }
+        ]
+    },
+    {
+        text: "Встретил Мишку. 🐻\nМишка: 'What color is the SUN?'",
+        icon: "🐻",
+        opts: [
+            { txt: "Yellow", next: 3, correct: true },
+            { txt: "Blue", next: -1, correct: false },
+            { txt: "Green", next: -1, correct: false }
+        ]
+    },
+    {
+        text: "А вот и Лисичка. 🦊\nЛисичка хитрая: 'Count to three!'",
+        icon: "🦊",
+        opts: [
+            { txt: "One, Two, Three", next: 100, correct: true }, // Win
+            { txt: "Cat, Dog, Fox", next: -1, correct: false }
+        ]
+    }
+];
+
+export function startKolobok() {
+    storyStep = 0;
+    renderKolobokScene();
+}
+
+function renderKolobokScene() {
+    const scene = document.getElementById('game-kolobok');
+    const data = STORY[storyStep];
+
+    // Progress Bar Logic
+    let progressHTML = `<div style="display:flex; justify-content:center; margin-bottom:20px; font-size:20px;">`;
+    STORY.forEach((s, i) => {
+        let status = i < storyStep ? "✅" : (i === storyStep ? "📍" : "⚪");
+        progressHTML += `<div style="margin:0 5px">${s.icon}<br>${status}</div>`;
+    });
+    progressHTML += `</div>`;
+
+    scene.innerHTML = `
+        <div style="padding: 20px; text-align: center; color: white;">
+            ${progressHTML}
+            <div style="font-size: 60px; margin-bottom: 20px; animation: bounce 2s infinite;">🍪</div>
+            <div style="font-size: 18px; margin-bottom: 30px; line-height: 1.5; white-space: pre-wrap;">${data.text}</div>
+            <div id="k-opts" style="display: flex; flex-direction: column; gap: 10px;"></div>
+        </div>
+        <style>
+            @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        </style>
+    `;
+
+    const optsDiv = document.getElementById('k-opts');
+    data.opts.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'opt-btn';
+        btn.innerText = opt.txt;
+        btn.onclick = () => checkKolobokAns(opt);
+        optsDiv.appendChild(btn);
+    });
+}
+
+function checkKolobokAns(opt) {
+    if (opt.correct) {
+        state.xp += 5;
+        saveState();
+        updateUI();
+
+        if (opt.next === 100) {
+            // Win Animation
+            const scene = document.getElementById('game-kolobok');
+            scene.innerHTML = `
+                <div style="text-align:center; color:white; padding-top:100px;">
+                    <div style="font-size:80px">🎉🦊🍪🎉</div>
+                    <h2>You are smart!</h2>
+                    <p>+20 coins</p>
+                </div>
+            `;
+            state.coins += 20;
+            saveState();
+            updateUI();
+            setTimeout(stopGame, 3000);
+        } else {
+            storyStep = opt.next;
+            renderKolobokScene();
+        }
+    } else {
+        alert("Incorrect! Try again.");
+        // Retry logic: just stay on screen
+    }
+}

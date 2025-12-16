@@ -1,0 +1,10 @@
+:root {
+    --primary: #FF9800;
+    --bg-room: #E3F2FD;
+    --bg-floor: #8D6E63;
+    /* Gradient for cat body */
+    --cat-grad-top: #FFAB91;
+    /* Reddish top */
+    --cat-grad-bot: #FFD54F;
+    /* Yellow bottom */
+}
