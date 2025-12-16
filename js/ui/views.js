@@ -20,7 +20,13 @@ export function setTab(id) {
     });
     
     const target = document.getElementById('tab-'+id);
-    if(target) target.style.display = (id==='shop'?'grid':(id==='quiz'?'flex':'block'));
+    if(target) {
+        // Special display for Adventure tab (Grid)
+        if(id === 'adv') target.style.display = 'grid';
+        else if(id === 'shop') target.style.display = 'grid';
+        else if(id === 'quiz') target.style.display = 'flex';
+        else target.style.display = 'block';
+    }
     
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     
