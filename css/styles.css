@@ -175,7 +175,7 @@ body {
     width: 44px;
     height: 40px;
     background: linear-gradient(to bottom, var(--cat-grad-top), var(--cat-grad-bot));
-    border-radius: 8px;
+    border-radius: 20px;
     /* Squarish body */
     position: absolute;
     bottom: 12px;
@@ -533,14 +533,19 @@ body {
 
 .tab-btn {
     flex: 1;
-    padding: 12px;
+    padding: 8px 5px;
     border: none;
     background: none;
-    font-size: 13px;
+    font-size: 11px;
     font-weight: bold;
     color: #90A4AE;
     cursor: pointer;
     touch-action: manipulation;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.2;
 }
 
 .tab-btn.active {
@@ -589,6 +594,8 @@ body {
     grid-template-columns: 1fr 1fr;
     gap: 8px;
     margin-top: 10px;
+    padding-bottom: 20px;
+    /* Safe area */
 }
 
 .opt-btn {
