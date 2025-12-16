@@ -10,6 +10,9 @@ export let gameMode = null;
 export let gameData = {};
 let runnerLoop = null;
 
+// Helper global for HTML onclick
+window.stopGameUI = stopGame;
+
 export function startGame(type) {
     if(gameMode) {
         if(!confirm("Завершить текущую игру?")) return;
@@ -17,7 +20,11 @@ export function startGame(type) {
     }
 
     gameMode = type;
+    
+    // Activate Fullscreen Game Mode
+    document.body.classList.add('game-mode');
     document.getElementById('main-scene').classList.add('game-active');
+    
     document.querySelectorAll('.adv-scene').forEach(e => e.classList.remove('active'));
     document.getElementById('game-'+type).classList.add('active');
     
@@ -25,6 +32,19 @@ export function startGame(type) {
     document.getElementById('tab-quiz').style.display = 'none';
     
     if(type === 'dog') { 
+        // Dog game is special: it runs IN the main view but needs space?
+        // Actually, let's keep Dog game mostly as is, but maybe fullscreen too?
+        // User complained about "Run Home" buttons.
+        // Let's make "dog" run in the standard view for now OR fullscreen it.
+        // If fullscreen, we need to show quiz controls inside the game scene.
+        // For now, let's EXCLUDE Dog from fullscreen mode if it relies on the bottom panel quiz.
+        // BUT user said "game selection buttons remain". 
+        // If we fullscreen, the bottom panel is hidden. 
+        // Dog game uses `setTab('quiz')`.
+        
+        // REVISION: Dog Game needs the bottom panel. So we DON'T add game-mode for Dog.
+        document.body.classList.remove('game-mode'); 
+        
         gameData = { dogPos: 0, catPos: 40 }; 
         updateDogScene(); 
         setTab('quiz'); 
@@ -51,6 +71,9 @@ export function startGame(type) {
 
 export function stopGame() {
     gameMode = null;
+    
+    // Disable Fullscreen
+    document.body.classList.remove('game-mode');
     document.getElementById('main-scene').classList.remove('game-active');
     
     // Reset loops
@@ -65,6 +88,8 @@ export function updateDogScene() {
     let dogEl = document.getElementById('dog-el');
     let catEl = document.getElementById('cat-run-el');
     
+    if(!dogEl || !catEl) return;
+
     dogEl.style.left = gameData.dogPos + '%';
     catEl.style.left = gameData.catPos + '%';
     
@@ -86,6 +111,7 @@ export function updateDogScene() {
 
 export function catchFishAnim() {
     let f = document.getElementById('fish-target');
+    if(!f) return;
     f.style.left = (20 + Math.random()*60) + '%'; 
     f.style.opacity = 1; 
     f.style.top = '10px';

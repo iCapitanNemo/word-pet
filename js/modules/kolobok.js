@@ -58,12 +58,23 @@ function renderKolobokScene() {
     });
     progressHTML += `</div>`;
 
+    // Updated Layout: Scrollable content area + Fixed bottom options
+    // Using flex column to ensure fits on screen
     scene.innerHTML = `
-        <div style="padding: 20px; text-align: center; color: white;">
-            ${progressHTML}
-            <div style="font-size: 60px; margin-bottom: 20px; animation: bounce 2s infinite;">🍪</div>
-            <div style="font-size: 18px; margin-bottom: 30px; line-height: 1.5; white-space: pre-wrap;">${data.text}</div>
-            <div id="k-opts" style="display: flex; flex-direction: column; gap: 10px;"></div>
+        <div style="
+            width: 100%; height: 100%; display: flex; flex-direction: column; 
+            padding: 20px; box-sizing: border-box; text-align: center; color: white;">
+            
+            <div style="flex-shrink: 0;">
+                ${progressHTML}
+                <div style="font-size: 60px; margin-bottom: 10px; animation: bounce 2s infinite;">🍪</div>
+            </div>
+
+            <div style="flex: 1; overflow-y: auto; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.3); border-radius: 10px; padding: 10px; background: rgba(0,0,0,0.2);">
+                <div style="font-size: 18px; line-height: 1.5; white-space: pre-wrap;">${data.text}</div>
+            </div>
+
+            <div id="k-opts" style="flex-shrink: 0; display: flex; flex-direction: column; gap: 10px; padding-bottom: 20px;"></div>
         </div>
         <style>
             @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
@@ -106,6 +117,5 @@ function checkKolobokAns(opt) {
         }
     } else {
         alert("Incorrect! Try again.");
-        // Retry logic: just stay on screen
     }
 }

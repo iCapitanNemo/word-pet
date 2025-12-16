@@ -40,6 +40,7 @@ body {
     align-items: center;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     flex-shrink: 0;
+    transition: transform 0.3s;
 }
 
 .stat-box {
@@ -149,7 +150,7 @@ body {
     left: 50%;
     width: 90px;
     height: 110px;
-    transition: left 0.1s linear, bottom 0.2s;
+    transition: left 0.1s linear, bottom 0.2s, transform 0.3s;
     z-index: 10;
     cursor: pointer;
 }
@@ -323,6 +324,8 @@ body {
     align-items: center;
     justify-content: center;
     position: relative;
+    width: 100%;
+    height: 100%;
 }
 
 .adv-scene.active {
@@ -506,25 +509,9 @@ body {
     height: 35%;
     flex-shrink: 0;
     position: relative;
-    /* Stick to bottom if needed, but flex column handles it */
+    transition: transform 0.3s, height 0.3s;
 }
 
-/* Ensure panel doesn't get squashed too much, but adapts */
-@media (max-height: 600px) {
-    .control-panel {
-        height: 45%;
-    }
-
-    .cat-head {
-        font-size: 50px;
-    }
-
-    #cat-container {
-        width: 70px;
-        height: 90px;
-        bottom: 12%;
-    }
-}
 
 .tabs {
     display: flex;
@@ -741,4 +728,118 @@ body {
     justify-content: center;
     box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
     border-radius: 8px;
+}
+
+/* =========================================
+   ADAPTIVE / RESPONSIVE MODES
+   ========================================= */
+
+/* FULLSCREEN GAME MODE (Immersive) */
+.game-mode .header {
+    transform: translateY(-100%);
+    display: none;
+}
+
+.game-mode .control-panel {
+    transform: translateY(100%);
+    display: none;
+}
+
+.game-mode .scene-container {
+    height: 100vh;
+    height: 100dvh;
+    border-radius: 0;
+}
+
+.game-mode #exit-game-btn {
+    display: block !important;
+}
+
+/* Exit Game Button (Floating) */
+#exit-game-btn {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.8);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    display: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+}
+
+/* SMART ADAPTATION FOR SHORT SCREENS (e.g. Mobile Keyboards, Small Phones) */
+@media (max-height: 700px) {
+
+    /* Shrink Header */
+    .header {
+        height: 40px;
+        padding: 5px 10px;
+    }
+
+    .stat-val {
+        font-size: 14px;
+    }
+
+    /* Give more space to controls, less to cat */
+    .control-panel {
+        height: 45%;
+        /* Increase panel height */
+    }
+
+    .scene-container {
+        flex: 1;
+        /* Shrinks automatically */
+    }
+
+    /* Shrink Cat */
+    #cat-container {
+        transform: scale(0.8);
+        bottom: 5%;
+        left: 45%;
+        /* Re-center after scale */
+    }
+
+    /* Compact Quiz Text */
+    .q-main {
+        margin: 2px 0;
+        font-size: 20px;
+    }
+
+    .q-emoji {
+        font-size: 30px;
+        min-height: 35px;
+    }
+
+    .q-opts {
+        gap: 5px;
+        margin-top: 5px;
+    }
+
+    .opt-btn {
+        padding: 8px;
+    }
+}
+
+@media (max-height: 550px) {
+
+    /* Very short screens (landscape or tiny phones) */
+    .control-panel {
+        height: 50%;
+    }
+
+    #cat-container {
+        transform: scale(0.6);
+        bottom: 2%;
+    }
+
+    .header {
+        display: none;
+    }
+
+    /* Hide header on super small screens */
 }
